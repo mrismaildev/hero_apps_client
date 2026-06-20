@@ -6,7 +6,7 @@ import LoadingPage from '../ui/LoadingPage';
 const AllAppsPage = () => {
   // const apps = useLoaderData();
   const [apps, setApps] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [totalItem, setTotalItem] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -17,8 +17,9 @@ const AllAppsPage = () => {
   const limit = 10;
 
   useEffect(() => {
+    setLoading(true);
     fetch(
-      `http://localhost:5000/apps?limit=${limit}&skip=${currentPage * limit}&sort=${sort}&order=${order}&search=${search}`,
+      `https://hero-apps-pagination-starter-server-ten.vercel.app/apps?limit=${limit}&skip=${currentPage * limit}&sort=${sort}&order=${order}&search=${search}`,
     )
       .then(res => res.json())
       .then(data => {
@@ -26,6 +27,7 @@ const AllAppsPage = () => {
         setTotalItem(data.total);
         const page = Math.ceil(data.total / limit);
         setTotalPage(page);
+        setLoading(false);
       });
   }, [totalPage, currentPage, order, sort, search]);
 
@@ -107,47 +109,53 @@ const AllAppsPage = () => {
       {/* Loading State */}
       <>
         {/* Apps Grid */}
-        <div className="w-11/12 mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10 gap-5">
-          {apps.length === 0 ? (
-            <div className="col-span-full text-center py-10 space-y-10">
-              <h2 className="text-6xl font-semibold opacity-60">
-                No Apps Found
-              </h2>
-              <button className="btn btn-primary">Show All Apps</button>
+        {loading ? (
+          <LoadingPage></LoadingPage>
+        ) : (
+          <>
+            <div className="w-11/12 mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10 gap-5">
+              {apps.length === 0 ? (
+                <div className="col-span-full text-center py-10 space-y-10">
+                  <h2 className="text-6xl font-semibold opacity-60">
+                    No Apps Found
+                  </h2>
+                  <button className="btn btn-primary">Show All Apps</button>
+                </div>
+              ) : (
+                apps.map(app => <AppCard key={app.id} app={app}></AppCard>)
+              )}
             </div>
-          ) : (
-            apps.map(app => <AppCard key={app.id} app={app}></AppCard>)
-          )}
-        </div>
 
-        <div className="flex justify-center flex-wrap gap-3 py-10">
-          <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="btn btn-primary"
-            disabled={currentPage === 0}
-          >
-            Prev
-          </button>
-          {[
-            ...Array(totalPage)
-              .keys()
-              .map(i => (
-                <button
-                  onClick={() => setCurrentPage(i)}
-                  className={`btn ${i === currentPage && 'btn-primary'}`}
-                >
-                  {i + 1}
-                </button>
-              )),
-          ]}
-          <button
-            onClick={() => setCurrentPage(currentPage + 1)}
-            className="btn btn-primary"
-            disabled={currentPage === totalPage - 1}
-          >
-            Next
-          </button>
-        </div>
+            <div className="flex justify-center flex-wrap gap-3 py-10">
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="btn btn-primary"
+                disabled={currentPage === 0}
+              >
+                Prev
+              </button>
+              {[
+                ...Array(totalPage)
+                  .keys()
+                  .map(i => (
+                    <button
+                      onClick={() => setCurrentPage(i)}
+                      className={`btn ${i === currentPage && 'btn-primary'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  )),
+              ]}
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="btn btn-primary"
+                disabled={currentPage === totalPage - 1}
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
       </>
     </div>
   );

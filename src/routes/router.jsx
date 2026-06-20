@@ -1,42 +1,50 @@
-import { createBrowserRouter } from "react-router";
-import App from "../layouts/App";
-import Home from "../pages/Home";
-import AllAppsPage from "../pages/AllAppsPage";
-import LoadingPage from "../ui/LoadingPage";
-import AppDetails from "../pages/AppDetails";
-import MyInstallation from "../pages/MyInstallation";
-import ErrorPage from "../ui/Error404";
+import { createBrowserRouter } from 'react-router';
+import App from '../layouts/App';
+import Home from '../pages/Home';
+import AllAppsPage from '../pages/AllAppsPage';
+import LoadingPage from '../ui/LoadingPage';
+import AppDetails from '../pages/AppDetails';
+import MyInstallation from '../pages/MyInstallation';
+import ErrorPage from '../ui/Error404';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App></App>,
     errorElement: <ErrorPage></ErrorPage>,
     hydrateFallbackElement: <LoadingPage></LoadingPage>,
     children: [
       {
-        path: "",
+        path: '',
         element: <Home></Home>,
-        loader: () => fetch("http://localhost:5000/apps"),
+        loader: () =>
+          fetch(
+            'https://hero-apps-pagination-starter-server-ten.vercel.app/apps',
+          ),
       },
       {
-        path: "/apps",
+        path: '/apps',
         element: <AllAppsPage></AllAppsPage>,
-        // loader: () => fetch("http://localhost:5000/apps?limit=10&skip=10"),
+        // loader: () => fetch("https://hero-apps-pagination-starter-server-ten.vercel.app/apps?limit=10&skip=10"),
       },
       {
-        path: "/apps/:id",
+        path: '/apps/:id',
         element: <AppDetails></AppDetails>,
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/apps/${params.id}`),
+          fetch(
+            `https://hero-apps-pagination-starter-server-ten.vercel.app/apps/${params.id}`,
+          ),
       },
       {
-        path: "/installations",
+        path: '/installations',
         element: <MyInstallation></MyInstallation>,
-        loader: () => fetch("http://localhost:5000/apps"),
+        loader: () =>
+          fetch(
+            'https://hero-apps-pagination-starter-server-ten.vercel.app/apps',
+          ),
       },
       {
-        path: "/blogs",
+        path: '/blogs',
         element: <h2>Single Items</h2>,
       },
     ],
